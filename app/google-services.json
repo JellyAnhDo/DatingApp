@@ -1,14 +1,13 @@
 {
   "project_info": {
-    "project_number": "1046568037442",
-    "firebase_url": "https://date-app-619a7-default-rtdb.asia-southeast1.firebasedatabase.app",
-    "project_id": "date-app-619a7",
-    "storage_bucket": "date-app-619a7.appspot.com"
+    "project_number": "116558519823",
+    "project_id": "datingapp-bebaf",
+    "storage_bucket": "datingapp-bebaf.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1046568037442:android:10ee60242dc4ae490351db",
+        "mobilesdk_app_id": "1:116558519823:android:7736f37f850f4ca6798d7a",
         "android_client_info": {
           "package_name": "com.quintus.labs.datingapp"
         }
@@ -16,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBdhViE2QPEHqauOmNTPHN4ZPT8KU6dQj8"
+          "current_key": "AIzaSyCAi6pYzzjQLK0NjIad_Oxf7GDA9_89PfE"
         }
       ],
       "services": {
