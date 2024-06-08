@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -49,6 +50,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 import com.quintus.labs.datingapp.Introduction.IntroductionMain;
+import com.quintus.labs.datingapp.Login.RegisterHobby;
 import com.quintus.labs.datingapp.R;
 import com.quintus.labs.datingapp.Utils.PulsatorLayout;
 import com.quintus.labs.datingapp.Utils.TopNavigationViewHelper;
@@ -124,8 +126,9 @@ public class MainActivity extends Activity {
                     swipeCard();
                 }else{
                   enableGPS();
+
                 }
-                }
+            }
 
 //            updateLocation();
 //            swipeCard();
@@ -361,13 +364,49 @@ public class MainActivity extends Activity {
                     MY_PERMISSIONS_REQUEST_LOCATION);
         } else {
             LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-            Location myLocation=locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            if (myLocation == null)
-            {
-                myLocation = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+            // Kiểm tra xem GPS_PROVIDER có sẵn không
+            if (locationManager != null && locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                // Sử dụng LocationListener để lắng nghe sự thay đổi vị trí
+                LocationListener locationListener = new LocationListener() {
+                    @Override
+                    public void onLocationChanged(Location location) {
+                        // Xử lý sự thay đổi vị trí
+                        
+//                        Toast.makeText(MainActivity.this, "Longtitude: " + location.getLongitude() + "-" + "latitude: " + location.getLatitude(), Toast.LENGTH_LONG ).show();
+                        FirebaseDatabase.getInstance().getReference().child("users").child(currentUserId).child("longitude").setValue(location.getLongitude());
+                        FirebaseDatabase.getInstance().getReference().child("users").child(currentUserId).child("latitude").setValue(location.getLatitude());
+                    }
+
+                    @Override
+                    public void onStatusChanged(String provider, int status, Bundle extras) {
+                    }
+
+                    @Override
+                    public void onProviderEnabled(String provider) {
+                    }
+
+                    @Override
+                    public void onProviderDisabled(String provider) {
+                    }
+                };
+
+                // Đăng ký LocationListener để nhận cập nhật vị trí từ GPS_PROVIDER
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 100, locationListener);
+            } else {
+                // Hiển thị thông báo Toast nếu GPS_PROVIDER không sẵn có hoặc đã bị tắt
+                Toast.makeText(getApplicationContext(), "GPS không khả dụng hoặc đã bị tắt", Toast.LENGTH_SHORT).show();
             }
-            FirebaseDatabase.getInstance().getReference().child("users").child(currentUserId).child("longitude").setValue(myLocation.getLongitude());
-            FirebaseDatabase.getInstance().getReference().child("users").child(currentUserId).child("latitude").setValue(myLocation.getLatitude());
+
+//            LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+//            Location myLocation=locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+//            if (myLocation == null)
+//            {
+//                myLocation = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+//            }
+//
+//            Toast.makeText(MainActivity.this, "Longtitude: " + myLocation.getLongitude() + "-" + "latitude: " + myLocation.getLatitude(), Toast.LENGTH_LONG ).show();
+//            FirebaseDatabase.getInstance().getReference().child("users").child(currentUserId).child("longitude").setValue(myLocation.getLongitude());
+//            FirebaseDatabase.getInstance().getReference().child("users").child(currentUserId).child("latitude").setValue(myLocation.getLatitude());
         }
     }
 
@@ -384,8 +423,7 @@ public class MainActivity extends Activity {
 //                        swipeCard();
                         enableGPS();
                     } else {
-                        Toast.makeText(MainActivity.this, "Chưa cấp quyền truy cấp địa chỉ, bạn phải cấp quyền truy cập địa chỉ để sử dụng lọc khoảng cách", Toast.LENGTH_SHORT)
-                                .show();
+                        Toast.makeText(MainActivity.this, "Chưa cấp quyền truy cấp địa chỉ, bạn phải cấp quyền truy cập địa chỉ để sử dụng lọc khoảng cách", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
